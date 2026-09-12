@@ -46,7 +46,7 @@ The repositories remain private pending the coordinated public release.
 ```sh
 npm install --global @clawkeepers/cli@beta
 clawos --version
-clawos cell create evaluation --policy messaging
+clawos cell create evaluation --port 19100 --policy messaging
 ```
 
 A clean-prefix CLI install/version smoke passed; npm-only fresh-VM acceptance is
