@@ -30,4 +30,4 @@ Acknowledgement within 3 days; a fix or mitigation plan within 14 days for confi
 
 ## Supported versions
 
-The latest minor release of each `@clawos/*` package, against the OpenClaw versions listed in its `openclaw.compat.pluginApi` range.
+The latest minor release of each `@clawkeepers/*` package, against the OpenClaw versions listed in its `openclaw.compat.pluginApi` range.
