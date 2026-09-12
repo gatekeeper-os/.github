@@ -6,7 +6,7 @@ Each agent starts with access to nothing. You introduce a resource — a folder,
 
 No more choosing between "approve every single tool call" and `--dangerously-skip-permissions`.
 
-**Status: pre-beta.** Kernel and filesystem driver accepted against a real Gateway in a VM; GitHub driver implemented and passing its integration suite, held from acceptance by one upstream logging issue. Details below — we'd rather you know exactly what's proven.
+**Status: published beta (`0.1.0-beta.1`).** Kernel and filesystem driver accepted against a real Gateway in a VM; GitHub driver implemented and passing its integration suite, held from acceptance by one upstream logging issue. Details below — we'd rather you know exactly what's proven.
 
 ## How it works
 
@@ -38,7 +38,21 @@ No more choosing between "approve every single tool call" and `--dangerously-ski
 
 ## Try it (on a disposable machine)
 
-The npm scope is `@clawkeepers` (reserved; not yet published). There's no npm or ClawHub package yet — the source installer provisions a cell with the pinned upstream, the kernel and the fs driver. Run it in a VM, not on your everyday Gateway; `docs/vm-testing.md` has the exact drivers and commands.
+The five packages `@clawkeepers/{shared,gatekeeper-kit,kernel,gatekeeper-fs,cli}`
+are public on npm at `0.1.0-beta.1`. Use `@beta`: `latest` currently resolves to
+this beta because no stable release exists. No ClawHub listing is claimed.
+The repositories remain private pending the coordinated public release.
+
+```sh
+npm install --global @clawkeepers/cli@beta
+clawos --version
+clawos cell create evaluation --policy messaging
+```
+
+A clean-prefix CLI install/version smoke passed; npm-only fresh-VM acceptance is
+still a separate gate. Keep the source installer as the VM evaluation route
+(repository access required); core's `docs/vm-testing.md` has the exact commands.
+All "what isn't proven" limitations above remain in force.
 
 ```bash
 git clone https://github.com/clawkeeper/openclaw-os.git && cd openclaw-os
