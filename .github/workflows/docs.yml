@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  docs-check:
+  build-test:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -17,4 +17,5 @@ jobs:
           git diff --check HEAD^ HEAD
           ! grep -R -n '@clawos/' ISSUE_TEMPLATE SECURITY.md profile
           grep -q '@clawkeepers' profile/README.md
-          grep -q 'not yet published' profile/README.md
+          grep -q 'npm install --global @clawkeepers/cli@beta' profile/README.md
+          grep -q 'no stable release exists' profile/README.md
