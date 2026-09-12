@@ -38,7 +38,7 @@ No more choosing between "approve every single tool call" and `--dangerously-ski
 
 ## Try it (on a disposable machine)
 
-There's no npm or ClawHub package yet — the source installer provisions a cell with the pinned upstream, the kernel and the fs driver. Run it in a VM, not on your everyday Gateway; `docs/vm-testing.md` has the exact drivers and commands.
+The npm scope is `@clawkeepers` (reserved; not yet published). There's no npm or ClawHub package yet — the source installer provisions a cell with the pinned upstream, the kernel and the fs driver. Run it in a VM, not on your everyday Gateway; `docs/vm-testing.md` has the exact drivers and commands.
 
 ```bash
 git clone https://github.com/clawkeeper/openclaw-os.git && cd openclaw-os

@@ -6,8 +6,8 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: Output of `openclaw --version` and `clawos --version` (or the `@clawos/*` package versions)
-      placeholder: openclaw 2026.9.2 · @clawos/kernel 0.1.0
+      description: Output of `openclaw --version` and `clawos --version` (or the `@clawkeepers/*` package versions)
+      placeholder: openclaw 2026.9.2 · @clawkeepers/kernel 0.1.0
     validations:
       required: true
   - type: textarea
