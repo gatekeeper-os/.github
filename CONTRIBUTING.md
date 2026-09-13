@@ -2,7 +2,7 @@
 
 Thanks for looking. Two repos, two bars:
 
-- **`openclaw-os`** (kernel, contracts, kit, CLI, conformance, reference gatekeepers) is held to the *kernel bar*: reviewers read every line, every exported member is doc-commented, and any change that touches how a grant is resolved or how a `gk_*` tool is registered gets a security-focused review first. Expect slower merges here; that's deliberate.
+- **`gatekeeper-os`** (kernel, contracts, kit, CLI, conformance, reference gatekeepers) is held to the *kernel bar*: reviewers read every line, every exported member is doc-commented, and any change that touches how a grant is resolved or how a `gk_*` tool is registered gets a security-focused review first. Expect slower merges here; that's deliberate.
 - **`gatekeepers`** (community drivers) is held to a normal bar, with one hard rule: every outside-world interaction must go through `authorizeObservation()` or `submitAction()`. The conformance check enforces it.
 
 ## Before you open a PR
