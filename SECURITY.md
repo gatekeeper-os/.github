@@ -1,12 +1,12 @@
 # Security policy
 
-clawkeeper is a security layer, so we treat reports seriously and respond quickly.
+GatekeeperOS is a security layer, so we treat reports seriously and respond quickly.
 
 ## Reporting a vulnerability
 
 Please **do not** open a public issue for anything that could be a vulnerability.
 
-Use GitHub's private vulnerability reporting on the affected repository ("Security" tab → "Report a vulnerability"). If that isn't available to you, email the maintainers at the address on the org profile with the subject line `[clawkeeper security]`.
+Use GitHub's private vulnerability reporting on the affected repository ("Security" tab → "Report a vulnerability"). If that isn't available to you, email the maintainers at the address on the org profile with the subject line `[GatekeeperOS security]`.
 
 Include: the affected package and version, the OpenClaw version you ran against, steps to reproduce, and what an attacker gains. A minimal proof of concept is ideal; a full exploit is not needed.
 
@@ -30,4 +30,4 @@ Acknowledgement within 3 days; a fix or mitigation plan within 14 days for confi
 
 ## Supported versions
 
-The latest minor release of each `@clawkeepers/*` package, against the OpenClaw versions listed in its `openclaw.compat.pluginApi` range.
+The latest minor release of each `@gatekeeper-os/*` package, against the OpenClaw versions listed in its `openclaw.compat.pluginApi` range.

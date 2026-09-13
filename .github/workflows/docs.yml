@@ -15,7 +15,7 @@ jobs:
       - name: Check whitespace and published-scope documentation
         run: |
           git diff --check HEAD^ HEAD
-          ! grep -R -n '@clawos/' ISSUE_TEMPLATE SECURITY.md profile
-          grep -q '@clawkeepers' profile/README.md
-          grep -q 'npm install --global @clawkeepers/cli@beta' profile/README.md
+          ! grep -R -n '@gkos/' ISSUE_TEMPLATE SECURITY.md profile
+          grep -q '@gatekeeper-os' profile/README.md
+          grep -q 'npm install --global @gatekeeper-os/cli@beta' profile/README.md
           grep -q 'no stable release exists' profile/README.md

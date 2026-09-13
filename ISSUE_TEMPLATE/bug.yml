@@ -6,15 +6,15 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: Output of `openclaw --version` and `clawos --version` (or the `@clawkeepers/*` package versions)
-      placeholder: openclaw 2026.9.2 · @clawkeepers/kernel 0.1.0
+      description: Output of `openclaw --version` and `gkos --version` (or the `@gatekeeper-os/*` package versions)
+      placeholder: openclaw 2026.9.2 · @gatekeeper-os/kernel 0.1.0
     validations:
       required: true
   - type: textarea
     id: what
     attributes:
       label: What happened
-      description: What you did, what you expected, what you got. Include the relevant lines from `clawos audit tail` if it's an access or approval question.
+      description: What you did, what you expected, what you got. Include the relevant lines from `gkos audit tail` if it's an access or approval question.
     validations:
       required: true
   - type: textarea
@@ -22,7 +22,7 @@ body:
     attributes:
       label: Steps to reproduce
       placeholder: |
-        1. clawos grant add --agent home file:///tmp/x
+        1. gkos grant add --agent home file:///tmp/x
         2. ask the agent to list the folder
         3. ...
   - type: checkboxes
