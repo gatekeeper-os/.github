@@ -10,17 +10,19 @@ Each agent starts with access to nothing. You introduce a resource — a folder,
 
 No more choosing between "approve every single tool call" and `--dangerously-skip-permissions`.
 
-**Status: private beta.3 preparation.** Beta.2 is published, but messaging cells
-in beta.1 and beta.2 did not expose the kernel's `os_*` and `gk_*` tools to the agent.
-Beta.3 admits only `gkos-kernel`; native denials are unchanged. The packed model-turn
-gate covers the fixed shipped baseline. npm-only end-to-end acceptance is pending.
+**Status: published beta.5; npm-only messaging-cell acceptance passed.**
+All five packages are available at `0.1.0-beta.5`. Run
+`20260916-220009-phase-3` passed on guest Node **22.22.3** and unmodified
+OpenClaw **2026.9.2**, including an independently owned gatekeeper absent from
+the kernel manifest. Real filesystem writes remain disabled; successful
+approval effects were synthetic, not real connected-provider acceptance.
 
 ## How it works
 
 - **Grants, not ACLs.** A grant is an opaque handle (`grant:7k3m9q2p`) the agent passes to gatekeeper tools. It never encodes the resource. Only an operator can create one; a URL pasted by anyone else is inert.
 - **Reads are authorized and logged.** Every read goes through `authorizeObservation()` before data returns to the agent, and lands in an append-only audit log that never contains prompts, tokens, headers or bodies.
 - **Writes are queued and simulated.** Every write goes through `submitAction()`, is journaled as pending, and is merged into the agent's subsequent reads as if it had happened. You apply, reject or revert it later — `gkos approvals apply 3`, or `/approvals apply 3` in a private operator chat.
-- **Two gates, not one.** A host-level trusted tool policy denies any gatekeeper call without an active grant *before* any plugin hook runs; the kernel's `before_tool_call` then checks the grant belongs to this agent, session and audience. Gatekeepers can't register tools themselves and never see credentials in their results.
+- **Two gates, not one.** A host-level trusted tool policy denies any gatekeeper call without an active grant *before* any plugin hook runs; the kernel's `before_tool_call` then checks the grant belongs to this agent, session and audience. Kit-owned wrappers register the gatekeeper's exact manifest tools under its own identity; execution and per-grant narrowing remain kernel-owned.
 - **Upstream stays untouched.** Nothing in the `openclaw` package is patched or vendored. The upstream version is pinned in a lockfile and a conformance suite decides whether a release is compatible. (The one-command update/rollback pipeline is designed but not built yet — see status.)
 
 ## Repositories
@@ -35,22 +37,21 @@ gate covers the fixed shipped baseline. npm-only end-to-end acceptance is pendin
 | | |
 |---|---|
 | Kernel, `fs` driver, cells, installer, config reconcile, backups | **Source-install evidence** — Phase 3: 78/78 conformance, 98/98 kernel-live checks, 23 model turns on `openclaw@2026.9.2`; 410/410 host tests. Kernel-live used the **full profile**, not the shipped messaging baseline. This did not verify messaging end to end. |
-| Packed model-turn gate | **Verified on fixed tarballs** — shipped messaging baseline from the CLI archive; deterministic no-grant `os_list_grants` / `os_request_access`, granted `gk_fs_*`, native denials unchanged. Real beta.2 tarballs fail this gate. Not a substitute for npm-only VM acceptance. |
-| npm-only cell provisioning | **Partial beta.2 evidence** — registry identities 5/5, cell creation, selector, install policy 14/14. Kernel-live stopped on missing `os_list_grants`; 38 selected conformance checks, owner-only audience and approvals were not reached. Beta.3 end-to-end acceptance pending. |
-| Deferred approval + simulation | **Source-install/full-profile evidence** on the fs driver (pending writes appear in later reads; reject removes them); not npm-only messaging-baseline acceptance. **Implemented and passing** on GitHub with a real Gateway and synthetic provider (100/103; comment pending → readback includes it → apply/reject/revert). |
+| Packed model-turn gate | **Verified beta.5 candidate on Node22.22.3** — shipped messaging baseline, no-grant OS tools, independent gatekeeper ownership/backstop, grants, synthetic approvals and native denials. Separate from npm-only acceptance. |
+| npm-only end-to-end checkpoint | **PASS beta.5**, run `20260916-220009-phase-3` on Node22.22.3 / OpenClaw2026.9.2: registry identities/tags/times/archive SHA5125/5, actual cell creation and selector, install-policy14/14, kernel-live114/114, selected conformance38/38, owner-only72/72, independent approvals30/30; 25 local model turns /39 requests. No product source checkout/build/patch. |
+| Deferred approval + simulation | **Source-install/full-profile evidence** on the fs driver (pending writes appear in later reads; reject removes them); beta.5 additionally passed npm-only messaging-baseline apply/reject with recorded synthetic effects and audit. **Implemented and passing** on GitHub with a real Gateway and synthetic provider (100/103; comment pending → readback includes it → apply/reject/revert). |
 | GitHub driver end-to-end against real GitHub | **Not yet.** Blocked on one upstream issue (below) plus a disposable test account. |
 | Filesystem *writes* | **Simulate-only.** `gk_fs_file_write` queues and simulates; applying to disk is disabled until race-safe confinement is proven. You can inspect and reject, not apply. |
 | Approvals TUI, blueprints, `gkos update`/rollback, MCP/HTTP drivers | **Not built.** Designed in `docs/implementation-plan.md`; placeholders only. |
-| Real chat transports | Owner/observer logic verified from source install with synthetic public-SDK ingress and the Control UI; npm-only audience checks remain pending. Telegram deferred; Slack untested. |
+| Real chat transports | Beta.5 npm-only owner-only audience checks passed72/72 using synthetic public-SDK ingress. Real Telegram remains deferred; real Slack acceptance is not claimed. |
 
 **The upstream issue:** on unmodified OpenClaw 2026.9.2, when a native `requireApproval` is denied or has no approval route, the Gateway logs the tool's raw arguments before any plugin runs. Only the optional synchronous path is affected; it ships off by default. Reported to the OpenClaw maintainers.
 
 ## Try it (on a disposable machine)
 
 The five packages `@gatekeeper-os/{shared,gatekeeper-kit,kernel,gatekeeper-fs,cli}`
-are published at beta.2, which has the messaging-policy defect above. Beta.3 is
-being prepared privately; repositories remain private. No ClawHub listing is
-claimed. Use `@beta` only **after beta.3 publication**; no stable release exists.
+are published at beta.5; `@beta` selects that line. Use Node22.22.3+ on a disposable
+evaluation machine. No ClawHub listing is claimed; no stable release exists.
 
 ```sh
 npm install --global @gatekeeper-os/cli@beta
@@ -58,11 +59,11 @@ gkos --version
 gkos cell create evaluation --port 19100 --policy messaging
 ```
 
-Beta.2 npm-only registry install, cell creation and install policy passed, but
-kernel tools were absent from messaging turns. Beta.3 npm-only fresh-VM acceptance
-is pending publication. Source kernel-live used the full profile; the packed gate
-now covers the shipped messaging baseline, but does not close the VM acceptance gate.
-Core's `docs/vm-testing.md` records the source route and all remaining limitations.
+Beta.5 passed the snapshot-based npm-only checkpoint against the published artifacts.
+The independent synthetic gatekeeper demonstrated apply/reject effects and audit;
+real filesystem writes and real connected-provider/channel acceptance remain out
+of scope. Earlier failed runs remain recorded as failures in core's
+[PROGRESS](https://github.com/gatekeeper-os/gatekeeper-os/blob/main/plans/PROGRESS.md).
 
 ```bash
 git clone https://github.com/gatekeeper-os/gatekeeper-os.git && cd gatekeeper-os
@@ -73,8 +74,8 @@ gkos audit tail --limit 20 --json
 ```
 
 In the source-install/full-profile acceptance fixture, a `file://` URL introduced by
-the operator enabled scoped `gk_fs_*` reads. The shipped messaging baseline is now
-covered by the packed model-turn gate; npm-only end-to-end validation remains pending.
+the operator enabled scoped `gk_fs_*` reads. The shipped messaging baseline is also
+covered by the passing beta.5 npm-only checkpoint above; this does not enable real filesystem writes.
 
 ## Lineage
 
