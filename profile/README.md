@@ -23,7 +23,7 @@ approval effects were synthetic, not real connected-provider acceptance.
 - **Reads are authorized and logged.** Every read goes through `authorizeObservation()` before data returns to the agent, and lands in an append-only audit log that never contains prompts, tokens, headers or bodies.
 - **Writes are queued and simulated.** Every write goes through `submitAction()`, is journaled as pending, and is merged into the agent's subsequent reads as if it had happened. You apply, reject or revert it later — `gkos approvals apply 3`, or `/approvals apply 3` in a private operator chat.
 - **Two gates, not one.** A host-level trusted tool policy denies any gatekeeper call without an active grant *before* any plugin hook runs; the kernel's `before_tool_call` then checks the grant belongs to this agent, session and audience. Kit-owned wrappers register the gatekeeper's exact manifest tools under its own identity; execution and per-grant narrowing remain kernel-owned.
-- **Upstream stays untouched.** Nothing in the `openclaw` package is patched or vendored. The upstream version is pinned in a lockfile and a conformance suite decides whether a release is compatible. (The one-command update/rollback pipeline is designed but not built yet — see status.)
+- **Upstream stays untouched.** Nothing in the `openclaw` package is patched or vendored. The upstream version is pinned in a lockfile and a conformance suite decides whether a release is compatible. (Staged update/rollback has a scoped runtime pass; full acceptance remains — see status.)
 
 ## Repositories
 
@@ -40,17 +40,22 @@ approval effects were synthetic, not real connected-provider acceptance.
 | Packed model-turn gate | **Verified beta.5 candidate on Node22.22.3** — shipped messaging baseline, no-grant OS tools, independent gatekeeper ownership/backstop, grants, synthetic approvals and native denials. Separate from npm-only acceptance. |
 | npm-only end-to-end checkpoint | **PASS beta.5**, run `20260916-220009-phase-3` on Node22.22.3 / OpenClaw2026.9.2: registry identities/tags/times/archive SHA5125/5, actual cell creation and selector, install-policy14/14, kernel-live114/114, selected conformance38/38, owner-only72/72, independent approvals30/30; 25 local model turns /39 requests. No product source checkout/build/patch. |
 | Deferred approval + simulation | **Source-install/full-profile evidence** on the fs driver (pending writes appear in later reads; reject removes them); beta.5 additionally passed npm-only messaging-baseline apply/reject with recorded synthetic effects and audit. **Implemented and passing** on GitHub with a real Gateway and synthetic provider (100/103; comment pending → readback includes it → apply/reject/revert). |
-| GitHub driver end-to-end against real GitHub | **Not yet.** Blocked on one upstream issue (below) plus a disposable test account. |
+| GitHub driver end-to-end against real GitHub | **Not yet.** Real-provider integration and full Phase 4 acceptance remain; the closed advisory below is not a pending upstream fix. |
 | Filesystem *writes* | **Simulate-only.** `gk_fs_file_write` queues and simulates; applying to disk is disabled until race-safe confinement is proven. You can inspect and reject, not apply. |
-| Approvals TUI, blueprints, `gkos update`/rollback, MCP/HTTP drivers | **Not built.** Designed in `docs/implementation-plan.md`; placeholders only. |
+| Approvals UX and auto-drain | Implemented scoped checkpoint `20260912-074628-phase-5`: 49/49 checks, six synthetic-model turns through a real Gateway; CLI tables/previews/revert, timer-only drain (10,812 ms), eligibility and stop/resume, digest and operator-command controls. Not a full-screen TUI. Full mode `20260912-074825-phase-5` exited 2; real GitHub integration and real operator-channel acceptance remain. |
+| Blueprints | Implemented provisioning: `20260912-083358-phase-6` passed 48/48 checks and four synthetic-model turns. Corrected two-cell checkpoint `20260912-155827-phase-9` passed runtime 28 checks/one turn and messaging 34 checks/three turns: coder Docker exec with network:none/read-only root/no socket, coder refusal before mutation in messaging, assistant/ops/researcher provisioning, exact web-tool controls and both deep audits. Full driver integration remains unaccepted; HTTP is deferred beyond this beta. |
+| Update/rollback | Implemented staged update/rollback: `20260912-065811-phase-7` passed nine assertions plus 3×14 real-Gateway probes on guest Node24.20.0; actual 2026.9.2→2026.9.4 activation, compatibility/conformance refusals, grants preserved, explicit rollback and SIGKILL recovery. Test-only reduced conformance is rejected by the production full validator. Full mode `20260912-070750-phase-7` exited 2; connected-provider conformance, post-activation model observation, scheduled delivery and the full nightly update matrix remain. |
+| MCP/HTTP | MCP read-only boundary implemented; `20260912-160720-phase-8` passed 105 package tests, 46 Gateway checks and eight synthetic-model turns. Generic/native actions remain disabled (`nativeDenialNotTested:true`); real-provider/full acceptance remains. HTTP is deferred beyond this beta. |
 | Real chat transports | Beta.5 npm-only owner-only audience checks passed72/72 using synthetic public-SDK ingress. Real Telegram remains deferred; real Slack acceptance is not claimed. |
 
-**The upstream issue:** on unmodified OpenClaw 2026.9.2, when a native `requireApproval` is denied or has no approval route, the Gateway logs the tool's raw arguments before any plugin runs. Only the optional synchronous path is affected; it ships off by default. Reported to the OpenClaw maintainers.
+**GHSA-22jj-m53c-524m disposition (2026-09-12):** the OpenClaw maintainers closed the advisory as not requiring a change: “crosses no OpenClaw trust boundary — a denied tool still never executes, and the logs are operator-owned on the operator's host, where the same tool arguments are already retained in operator-readable session transcripts”. GatekeeperOS keeps the synchronous path (`awaitDecision` → native `requireApproval`) off by default as its own log-hygiene choice, not pending an upstream fix. Enabling it can put tool arguments in the operator's Gateway logs on denial or when no approval route exists; denial still prevents execution. This disposition does not turn previous failed body-secrecy checks into passes or establish full GitHub/MCP acceptance.
 
 ## Try it (on a disposable machine)
 
 The five packages `@gatekeeper-os/{shared,gatekeeper-kit,kernel,gatekeeper-fs,cli}`
-are published at beta.5; `@beta` selects that line. Use Node22.22.3+ on a disposable
+are published at beta.5; `beta` and `latest` select that line. All three
+repositories are public and trusted publishing is configured for all five
+packages against `gatekeeper-os/gatekeeper-os` + `release.yml`. Use Node22.22.3+ on a disposable
 evaluation machine. No ClawHub listing is claimed; no stable release exists.
 
 ```sh
